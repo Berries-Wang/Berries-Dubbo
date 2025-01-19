@@ -20,9 +20,13 @@ import org.apache.dubbo.common.utils.ArrayUtils;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -360,6 +364,14 @@ public final class ClassGenerator {
             }
 
             try {
+                try {
+                    String java_assist_class_path = System.getProperty("Java_Assist_Class_Path");
+                    if (StringUtils.isNotBlank(java_assist_class_path)) {
+                        mCtc.toBytecode(new DataOutputStream(Files.newOutputStream(
+                                Paths.get(java_assist_class_path + "/" + mCtc.getName() + ".class"))));
+                    }
+                } catch (Throwable t) {
+                }
                 return mPool.toClass(mCtc, neighborClass, loader, pd);
             } catch (Throwable t) {
                 if (!(t instanceof CannotCompileException)) {

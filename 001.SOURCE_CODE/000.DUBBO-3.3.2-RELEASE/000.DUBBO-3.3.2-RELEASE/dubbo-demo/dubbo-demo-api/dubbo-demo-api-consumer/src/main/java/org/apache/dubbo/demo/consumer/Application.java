@@ -23,24 +23,26 @@ import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.demo.DemoService;
+import org.apache.dubbo.rpc.service.Destroyable;
 import org.apache.dubbo.rpc.service.GenericService;
 
 public class Application {
 
-    private static final String REGISTRY_URL = "zookeeper://127.0.0.1:2181";
+    private static final String REGISTRY_URL = "zookeeper://192.168.3.198:2181";
 
     public static void main(String[] args) {
         runWithBootstrap();
     }
 
     private static void runWithBootstrap() {
+        System.setProperty("Java_Assist_Class_Path",
+                "/Users/wang/WorkSpace/OpenSource/Berries-Dubbo/001.SOURCE_CODE/000.DUBBO-3.3.2-RELEASE/000.DUBBO-3.3.2-RELEASE/logs");
         ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
         reference.setInterface(DemoService.class);
         reference.setGeneric("true");
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap
-                .application(new ApplicationConfig("dubbo-demo-api-consumer"))
+        bootstrap.application(new ApplicationConfig("dubbo-demo-api-consumer"))
                 .registry(new RegistryConfig(REGISTRY_URL))
                 .protocol(new ProtocolConfig(CommonConstants.DUBBO, -1))
                 .reference(reference)
@@ -51,9 +53,12 @@ public class Application {
         System.out.println(message);
 
         // generic invoke
-        GenericService genericService = (GenericService) demoService;
-        Object genericInvokeResult = genericService.$invoke(
-                "sayHello", new String[] {String.class.getName()}, new Object[] {"dubbo generic invoke"});
+        GenericService genericService = (GenericService)demoService;
+        Object genericInvokeResult = genericService.$invoke("sayHello", new String[] {String.class.getName()},
+                new Object[] {"dubbo generic invoke"});
+
+        Destroyable destroyable = (Destroyable)demoService;
+        destroyable.$destroy();
         System.out.println(genericInvokeResult.toString());
     }
 }
