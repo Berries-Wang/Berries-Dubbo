@@ -63,8 +63,22 @@ Dubbo 中泛化调用的实现原理主要涉及动态代理、序列化与反�
            return CompletableFuture.completedFuture(sayHello(name));
        }
    }
-   
-    // 泛化调用方法
+
+      // 泛化调用方法
+      // org.apache.dubbo.demo.consumer.Application
+        ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
+        reference.setInterface(DemoService.class);
+        reference.setGeneric("true");
+
+        DubboBootstrap bootstrap = DubboBootstrap.getInstance();
+        bootstrap.application(new ApplicationConfig("dubbo-demo-api-consumer"))
+                .registry(new RegistryConfig(REGISTRY_URL))
+                .protocol(new ProtocolConfig(CommonConstants.DUBBO, -1))
+                .reference(reference)
+                .start();
+
+        DemoService demoService = bootstrap.getCache().get(reference);
+
     GenericService genericService = (GenericService)demoService;
     Object genericInvokeResult = genericService.$invoke("sayHello", new String[] {String.class.getName()},
                 new Object[] {"dubbo generic invoke"});
