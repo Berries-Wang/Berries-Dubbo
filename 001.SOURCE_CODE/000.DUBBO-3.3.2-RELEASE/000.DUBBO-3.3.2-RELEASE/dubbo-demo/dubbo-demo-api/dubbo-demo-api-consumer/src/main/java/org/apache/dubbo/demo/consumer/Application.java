@@ -26,9 +26,13 @@ import org.apache.dubbo.demo.DemoService;
 import org.apache.dubbo.rpc.service.Destroyable;
 import org.apache.dubbo.rpc.service.GenericService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Application {
 
-    private static final String REGISTRY_URL = "zookeeper://192.168.3.198:2181";
+    public static final String REGISTRY_URL = "zookeeper://192.168.3.198:2181";
+    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
         runWithBootstrap();

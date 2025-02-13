@@ -3,7 +3,7 @@
 
 在 Dubbo 中，泛化调用是指客户端调用服务端的方法时(客户端泛化)，可以`不依赖于服务端接口的具体定义`，而是`通过指定方法名和参数来实现调用`。这种泛化调用的实现原理涉及到 Dubbo 的`动态代理机制`以及`序列化`与`反序列化`过程。
 
-Dubbo 中泛化调用的实现原理主要涉及动态代理、序列化与反序列化以及泛化调用的实现类。通过这些机制，Dubbo 可以实现对服务端接口定义的解耦，使得客户端可以通过指定方法名和参数来进行调用，从而实现泛化调用的功能。
+Dubbo 中泛化调用的实现原理主要涉及动态代理、序列化与反序列化以及泛化调用的实现类。通过这些机制，Dubbo 可以实现`对服务端接口定义的解耦`<sup>对服务端接口定义的解耦: 很到位</sup>，使得客户端可以通过指定方法名和参数来进行调用，从而实现泛化调用的功能。
 
 ## 使用场景
 泛化调用可通过一个通用的 [GenericService](../../001.SOURCE_CODE/000.DUBBO-3.3.2-RELEASE/000.DUBBO-3.3.2-RELEASE/dubbo-common/src/main/java/org/apache/dubbo/rpc/service/GenericService.java) 接口对所有服务发起请求
@@ -47,6 +47,10 @@ Dubbo 中泛化调用的实现原理主要涉及动态代理、序列化与反�
 2. 测试平台: 
     - 如果要搭建一个可以测试 RPC 调用的平台，用户输入分组名、接口、方法名等信息，就可以测试对应的 RPC 服务。那么由于同样的原因（即会导致每有一个新的服务发布，就需要修改网关的代码以及重新部署），所以平台本身不应该依赖于服务提供方的接口 API。所以需要泛化调用的支持。
 
+
+### 泛化调用DEMO: [org.apache.dubbo.demo.consumer.GenericCallApplication](./../../001.SOURCE_CODE/000.DUBBO-3.3.2-RELEASE/000.DUBBO-3.3.2-RELEASE/dubbo-demo/dubbo-demo-api/dubbo-demo-api-consumer/src/main/java/org/apache/dubbo/demo/consumer/GenericCallApplication.java)
+> 如代码示例，只需要方法签名，就可以对服务进行调用，而不用依赖于服务提供方的sdk。
+
 ---
 
 ### consumer 启动向zookeeper注册
@@ -64,24 +68,7 @@ Dubbo 中泛化调用的实现原理主要涉及动态代理、序列化与反�
        }
    }
 
-      // 泛化调用方法
-      // org.apache.dubbo.demo.consumer.Application
-        ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
-        reference.setInterface(DemoService.class);
-        reference.setGeneric("true");
-
-        DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap.application(new ApplicationConfig("dubbo-demo-api-consumer"))
-                .registry(new RegistryConfig(REGISTRY_URL))
-                .protocol(new ProtocolConfig(CommonConstants.DUBBO, -1))
-                .reference(reference)
-                .start();
-
-        DemoService demoService = bootstrap.getCache().get(reference);
-
-    GenericService genericService = (GenericService)demoService;
-    Object genericInvokeResult = genericService.$invoke("sayHello", new String[] {String.class.getName()},
-                new Object[] {"dubbo generic invoke"});
+    // org.apache.dubbo.demo.consumer.Application
 
 // 21:42:35.809 |-INFO  [main] bbo.registry.zookeeper.ZookeeperRegistry:425 -|  [DUBBO] Register: dubbo://192.168.3.7:20880/org.apache.dubbo.demo.DemoService?application=dubbo-demo-api-provider&deprecated=false&dubbo=2.0.2&dynamic=true&generic=false&interface=org.apache.dubbo.demo.DemoService&methods=sayHello,sayHelloAsync&prefer.serialization=hessian2,fastjson2&release=3.3.2&service-name-mapping=true&side=provider&timestamp=1739454081130, dubbo version: 3.3.2, current host: 192.168.3.7
 ```
