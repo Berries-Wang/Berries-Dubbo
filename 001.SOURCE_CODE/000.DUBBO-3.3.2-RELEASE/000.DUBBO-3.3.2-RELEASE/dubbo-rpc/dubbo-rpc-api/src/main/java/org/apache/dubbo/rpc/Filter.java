@@ -23,9 +23,10 @@ import org.apache.dubbo.common.extension.SPI;
  * Extension for intercepting the invocation for both service provider and consumer, furthermore, most of
  * functions in dubbo are implemented base on the same mechanism. Since every time when remote method is
  * invoked, the filter extensions will be executed too, the corresponding penalty should be considered before
- * more filters are added.
+ * more filters are added.(为服务提供者和服务消费者提供拦截调用的扩展，另外 dubbo 中的大部分功能都是基于同一种机制实现的。
+ * 由于每次调用远程方法时，过滤器扩展也会被执行，所以在添加更多过滤器之前，需要考虑相应的惩罚。)
  * <pre>
- *  They way filter work from sequence point of view is
+ *  They way filter work from sequence point of view is(从序列的角度来看，过滤器的工作方式是)
  *    <b>
  *    ...code before filter ...
  *          invoker.invoke(invocation) //filter work in a filter implementation class

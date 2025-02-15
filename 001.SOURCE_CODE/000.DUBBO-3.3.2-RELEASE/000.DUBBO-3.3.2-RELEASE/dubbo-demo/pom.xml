@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<?xml version="1.0" encoding="UTF-8"?><!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
   this work for additional information regarding copyright ownership.
@@ -27,7 +26,6 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>The demo module of dubbo project</description>
-
   <modules>
     <module>dubbo-demo-interface</module>
     <module>dubbo-demo-xml</module>
@@ -37,8 +35,8 @@
     <module>dubbo-demo-triple</module>
     <module>dubbo-demo-native</module>
     <module>dubbo-demo-spring-boot</module>
+    <module>dubbo-demo-sentinel</module>
   </modules>
-
   <properties>
     <skip_maven_deploy>true</skip_maven_deploy>
   </properties>
