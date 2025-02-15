@@ -1,0 +1,1 @@
+Dubbo.STU.Filter=org.apache.dubbo.sentinel.provider.filter.DubboSTUFilter

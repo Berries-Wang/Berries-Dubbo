@@ -20,6 +20,10 @@ import org.apache.dubbo.common.extension.ExtensionScope;
 import org.apache.dubbo.common.extension.SPI;
 
 /**
+ * <p>
+ *     需要结合 {@link  org.apache.dubbo.rpc.cluster.filter.DefaultFilterChainBuilder#buildInvokerChain(org.apache.dubbo.rpc.Invoker, java.lang.String, java.lang.String)}来分析
+ * </p>
+ *
  * Extension for intercepting the invocation for both service provider and consumer, furthermore, most of
  * functions in dubbo are implemented base on the same mechanism. Since every time when remote method is
  * invoked, the filter extensions will be executed too, the corresponding penalty should be considered before

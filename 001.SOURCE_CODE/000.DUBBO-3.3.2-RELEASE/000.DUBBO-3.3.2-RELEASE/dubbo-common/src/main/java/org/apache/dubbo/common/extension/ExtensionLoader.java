@@ -1002,6 +1002,16 @@ public class ExtensionLoader<T> {
 
     private void loadDirectory(Map<String, Class<?>> extensionClasses, LoadingStrategy strategy, String type)
             throws InterruptedException {
+        /**
+         * <pre>
+         *     场景1： org.apache.dubbo.rpc.Filter , 此时 type就是 org.apache.dubbo.rpc.Filter
+         * 按照代码逻辑： 去加载自定义 Filter 时 ， 会去加载 org.apache.dubbo.rpc.Filter 文件，而 org.alibaba.dubbo.rpc.Filter 则不会加载
+         * </pre>
+         *
+         * <pre>
+         *     场景2：
+         * </pre>
+         */
         loadDirectoryInternal(extensionClasses, strategy, type);
         if (Dubbo2CompactUtils.isEnabled()) {
             try {

@@ -68,6 +68,7 @@ public class DefaultFilterChainBuilder implements FilterChainBuilder {
             for (int i = filters.size() - 1; i >= 0; i--) {
                 final Filter filter = filters.get(i);
                 final Invoker<T> next = last;
+                // 将 Filter 包装成 CopyOfFilterChainNode , 即构成了一个调用链(责任链)
                 last = new CopyOfFilterChainNode<>(originalInvoker, next, filter);
             }
             return new CallbackRegistrationInvoker<>(last, filters);
