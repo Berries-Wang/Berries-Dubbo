@@ -146,6 +146,9 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
      * the selected invoker has the minimum chance to be one in the previously selected list, and also
      * guarantees this invoker is available.（重选，重选的验证规则：已选 > 可用。此规则保证所选的调用者有最小的机会成为之前所选列表中的调用者，并且还保证此调用者可用。）
      *
+     * <pre>
+     *     通过Debug，invokers 元素类型(一个Provider) : org.apache.dubbo.rpc.protocol.ReferenceCountInvokerWrapper
+     * </pre>
      * @param loadbalance load balance policy
      * @param invocation  invocation
      * @param invokers    invoker candidates

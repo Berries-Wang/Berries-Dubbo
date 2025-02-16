@@ -74,7 +74,7 @@ public class FailoverClusterInvoker<T> extends AbstractClusterInvoker<T> {
                 // check again
                 checkInvokers(copyInvokers, invocation);
             }
-            // 根据负载均衡策略，选择Provider
+            // 根据负载均衡策略，选择Provider (查看： 002.STU-DOCS/001.Dubbo负载均衡策略-服务治理/Dubbo负载均衡策略.md) ， invoked 中的invoker就是Provider的一个抽象
             Invoker<T> invoker = select(loadbalance, invocation, copyInvokers, invoked);
             invoked.add(invoker);
             RpcContext.getServiceContext().setInvokers((List) invoked);

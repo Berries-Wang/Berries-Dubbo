@@ -34,7 +34,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.DEFAULT_TIMEOUT;
 import static org.apache.dubbo.common.constants.CommonConstants.LOADBALANCE_KEY;
 
 /**
- * AdaptiveLoadBalance
+ * AdaptiveLoadBalance: 自适应负载均衡算法
  * </p>
  */
 public class AdaptiveLoadBalance extends AbstractLoadBalance {
