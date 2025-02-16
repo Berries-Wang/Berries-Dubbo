@@ -1,10 +1,8 @@
 # DUbbo负载均衡策略
 > 先阅读:[负载均衡策略与配置细节](./负载均衡策略与配置细节%20_%20Apache%20Dubbo.pdf) & [自适应负载均衡与限流 _ Apache Dubbo](./自适应负载均衡与限流%20_%20Apache%20Dubbo.pdf)
 
-
 Dubbo 默认的负载均衡策略： Weighted Random LoadBalance（加权随机） ， 还要注意: 
 1. ConsistentHash LoadBalance(一致性哈希) ， 确定的入参和确定的提供者，适用于有状态的请求(如 需要会话 )
-
 
 ## 负载均衡&限流配置
 ### 负载均衡配置
@@ -32,3 +30,8 @@ Dubbo 默认的负载均衡策略： Weighted Random LoadBalance（加权随机�
 
 ## 负载均衡生效环节
 ![1ae6e28c70ec0be88a53006d37103f2f.png](./../005.IMGS/1ae6e28c70ec0be88a53006d37103f2f.png)
+
+
+## 负载均衡源码分析
+> 源代码:[org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker#select](../../001.SOURCE_CODE/000.DUBBO-3.3.2-RELEASE/000.DUBBO-3.3.2-RELEASE/dubbo-cluster/src/main/java/org/apache/dubbo/rpc/cluster/support/AbstractClusterInvoker.java) ， 阅读代码&代码注释
+

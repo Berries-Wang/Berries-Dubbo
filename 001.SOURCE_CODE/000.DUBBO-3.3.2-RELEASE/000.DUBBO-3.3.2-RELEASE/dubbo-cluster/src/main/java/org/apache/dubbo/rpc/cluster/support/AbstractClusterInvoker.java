@@ -137,13 +137,14 @@ public abstract class AbstractClusterInvoker<T> implements ClusterInvoker<T> {
     }
 
     /**
-     * Select a invoker using loadbalance policy.</br>
+     * Select a invoker using loadbalance policy.(根据负载均衡策略选择invoker)</br>
      * a) Firstly, select an invoker using loadbalance. If this invoker is in previously selected list, or,
-     * if this invoker is unavailable, then continue step b (reselect), otherwise return the first selected invoker</br>
+     * if this invoker is unavailable, then continue step b (reselect), otherwise return the first selected invoker
+     * （首先，使用负载平衡选择一个调用者。如果此调用者在先前选择的列表中，或者此调用者不可用，则继续步骤 b（重新选择），否则返回第一个选定的调用者）</br>
      * <p>
      * b) Reselection, the validation rule for reselection: selected > available. This rule guarantees that
      * the selected invoker has the minimum chance to be one in the previously selected list, and also
-     * guarantees this invoker is available.
+     * guarantees this invoker is available.（重选，重选的验证规则：已选 > 可用。此规则保证所选的调用者有最小的机会成为之前所选列表中的调用者，并且还保证此调用者可用。）
      *
      * @param loadbalance load balance policy
      * @param invocation  invocation
