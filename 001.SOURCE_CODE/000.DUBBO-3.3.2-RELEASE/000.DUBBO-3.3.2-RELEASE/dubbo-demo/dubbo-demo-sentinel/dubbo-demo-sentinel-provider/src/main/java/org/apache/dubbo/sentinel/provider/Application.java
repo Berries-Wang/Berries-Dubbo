@@ -38,6 +38,10 @@ public class Application {
         ServiceConfig<DemoSentinelServiceImpl> service = new ServiceConfig<>();
         service.setInterface(DemoSentinelService.class);
         service.setRef(new DemoSentinelServiceImpl());
+        {
+            // service.setActives(9); // 并不会导入 Filter , 因为这是个消费端参数.
+            service.setExecutes(9); // 设置最大并发数: 请求链路中会多一个Filter：org.apache.dubbo.rpc.filter.ExecuteLimitFilter
+        }
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
         bootstrap.application(new ApplicationConfig("dubbo-demo-sentinel-provider"))

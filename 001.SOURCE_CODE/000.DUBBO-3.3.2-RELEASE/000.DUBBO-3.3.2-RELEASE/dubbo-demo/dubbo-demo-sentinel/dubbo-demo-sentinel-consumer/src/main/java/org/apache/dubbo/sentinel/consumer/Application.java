@@ -47,6 +47,7 @@ public class Application {
         reference.setInterface(DemoSentinelService.class);
         reference.setGeneric("true");
         reference.setTimeout(Integer.MAX_VALUE);
+        reference.setActives(5); // 调用链路中会注册: org.apache.dubbo.rpc.filter.ActiveLimitFilter
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
         bootstrap.application(new ApplicationConfig("dubbo-demo-sentinel-consumer"))
