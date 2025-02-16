@@ -48,7 +48,7 @@ import static org.apache.dubbo.common.constants.LoggerCodeConstants.REGISTRY_FAI
 import static org.apache.dubbo.common.utils.CollectionUtils.isEmpty;
 
 /**
- * Implementation providing remote RPC service to facilitate the query of metadata information.
+ * Implementation providing remote RPC service to facilitate（促进，促使） the query of metadata information.
  */
 public class MetadataServiceDelegation implements MetadataService, Disposable {
     ErrorTypeAwareLogger logger = LoggerFactory.getErrorTypeAwareLogger(getClass());
