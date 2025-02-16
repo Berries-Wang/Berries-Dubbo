@@ -35,3 +35,6 @@ Dubbo 默认的负载均衡策略： Weighted Random LoadBalance（加权随机�
 ## 负载均衡源码分析
 > 源代码:[org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker#select](../../001.SOURCE_CODE/000.DUBBO-3.3.2-RELEASE/000.DUBBO-3.3.2-RELEASE/dubbo-cluster/src/main/java/org/apache/dubbo/rpc/cluster/support/AbstractClusterInvoker.java) ， 阅读代码&代码注释
 
+
+class org.apache.dubbo.rpc.cluster.filter.FilterChainBuilder$CopyOfClusterFilterChainNode
+
