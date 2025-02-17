@@ -36,6 +36,7 @@
     <module>dubbo-demo-native</module>
     <module>dubbo-demo-spring-boot</module>
     <module>dubbo-demo-sentinel</module>
+    <module>dubbo-demo-discovery</module>
   </modules>
   <properties>
     <skip_maven_deploy>true</skip_maven_deploy>
