@@ -168,8 +168,7 @@ public class NettyServer extends AbstractServer {
 
     protected void initServerBootstrap(NettyServerHandler nettyServerHandler) {
         boolean keepalive = getUrl().getParameter(KEEP_ALIVE_KEY, Boolean.FALSE);
-        bootstrap
-                .group(bossGroup, workerGroup)
+        bootstrap.group(bossGroup, workerGroup)
                 .channel(NettyEventLoopFactory.serverSocketChannelClass())
                 .option(ChannelOption.SO_REUSEADDR, Boolean.TRUE)
                 .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)
@@ -185,6 +184,7 @@ public class NettyServer extends AbstractServer {
                                 .addLast("decoder", adapter.getDecoder())
                                 .addLast("encoder", adapter.getEncoder())
                                 .addLast("server-idle-handler", new IdleStateHandler(0, 0, closeTimeout, MILLISECONDS))
+                                // 注意这个  nettyServerHandler , 包含有: 1. 线程模型逻辑: all,direct,... ; 2. ...
                                 .addLast("handler", nettyServerHandler);
                     }
                 });

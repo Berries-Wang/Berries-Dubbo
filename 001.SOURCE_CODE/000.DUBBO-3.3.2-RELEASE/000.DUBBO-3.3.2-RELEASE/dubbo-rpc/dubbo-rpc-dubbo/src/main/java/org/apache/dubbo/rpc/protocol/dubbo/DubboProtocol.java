@@ -364,6 +364,9 @@ public class DubboProtocol extends AbstractProtocol {
         return exporter;
     }
 
+    /**
+     * 创建 Dubbo Server了， 即创建Netty Server
+     */
     private void openServer(URL url) {
         checkDestroyed();
         // find server.
