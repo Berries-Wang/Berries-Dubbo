@@ -166,6 +166,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             checkMultiplicity(handler);
             name = filterName(name, handler);
 
+            // 创建一个新的 ChannelHandlerContext
             newCtx = newContext(group, name, handler);
 
             switch (addStrategy) {

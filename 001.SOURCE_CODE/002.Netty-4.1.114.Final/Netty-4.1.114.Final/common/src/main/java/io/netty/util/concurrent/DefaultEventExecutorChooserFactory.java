@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Default implementation which uses simple round-robin to choose next {@link EventExecutor}.
+ * EventExecutor 选择器
  */
 public final class DefaultEventExecutorChooserFactory implements EventExecutorChooserFactory {
 

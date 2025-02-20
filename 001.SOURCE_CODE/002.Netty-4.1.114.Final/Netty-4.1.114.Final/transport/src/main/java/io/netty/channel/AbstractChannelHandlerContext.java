@@ -250,16 +250,16 @@ abstract class AbstractChannelHandlerContext implements ChannelHandlerContext, R
         if (invokeHandler()) {
             try {
                 // DON'T CHANGE
-                // Duplex handlers implements both out/in interfaces causing a scalability issue
+                // Duplex handlers implements both out/in interfaces causing a scalability issue（双工处理程序同时实现输出/输入接口，从而导致可伸缩性问题）
                 // see https://bugs.openjdk.org/browse/JDK-8180450
                 final ChannelHandler handler = handler();
                 final DefaultChannelPipeline.HeadContext headContext = pipeline.head;
                 if (handler == headContext) {
                     headContext.channelActive(this);
                 } else if (handler instanceof ChannelInboundHandlerAdapter) {
-                    ((ChannelInboundHandlerAdapter) handler).channelActive(this);
+                    ((ChannelInboundHandlerAdapter)handler).channelActive(this);
                 } else {
-                    ((ChannelInboundHandler) handler).channelActive(this);
+                    ((ChannelInboundHandler)handler).channelActive(this);
                 }
             } catch (Throwable t) {
                 invokeExceptionCaught(t);

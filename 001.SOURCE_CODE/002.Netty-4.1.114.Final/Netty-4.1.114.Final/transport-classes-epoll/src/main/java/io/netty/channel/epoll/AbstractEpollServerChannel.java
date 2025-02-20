@@ -15,14 +15,7 @@
  */
 package io.netty.channel.epoll;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelConfig;
-import io.netty.channel.ChannelMetadata;
-import io.netty.channel.ChannelOutboundBuffer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.ChannelPromise;
-import io.netty.channel.EventLoop;
-import io.netty.channel.ServerChannel;
+import io.netty.channel.*;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -106,9 +99,12 @@ public abstract class AbstractEpollServerChannel extends AbstractEpollChannel im
             try {
                 try {
                     do {
-                        // lastBytesRead represents the fd. We use lastBytesRead because it must be set so that the
-                        // EpollRecvByteAllocatorHandle knows if it should try to read again or not when autoRead is
-                        // enabled.
+                        /**
+                         * lastBytesRead represents the fd. We use lastBytesRead because it must be set so that the EpollRecvByteAllocatorHandle
+                         * knows if it should try to read again or not when autoRead is enabled.
+                         *
+                         * // 终于，看到 accept 操作了
+                         */
                         allocHandle.lastBytesRead(socket.accept(acceptedAddress));
                         if (allocHandle.lastBytesRead() == -1) {
                             // this means everything was handled for now
@@ -117,8 +113,8 @@ public abstract class AbstractEpollServerChannel extends AbstractEpollChannel im
                         allocHandle.incMessagesRead(1);
 
                         readPending = false;
-                        pipeline.fireChannelRead(newChildChannel(allocHandle.lastBytesRead(), acceptedAddress, 1,
-                                                                 acceptedAddress[0]));
+                        pipeline.fireChannelRead(
+                            newChildChannel(allocHandle.lastBytesRead(), acceptedAddress, 1, acceptedAddress[0]));
                     } while (allocHandle.continueReading());
                 } catch (Throwable t) {
                     exception = t;

@@ -15,18 +15,7 @@
  */
 package io.netty.bootstrap;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelConfig;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
+import io.netty.channel.*;
 import io.netty.util.AttributeKey;
 import io.netty.util.internal.ObjectUtil;
 import io.netty.util.internal.logging.InternalLogger;
@@ -41,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * {@link Bootstrap} sub-class which allows easy bootstrap of {@link ServerChannel}
- *
  */
 public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerChannel> {
 
@@ -55,7 +43,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
     private volatile EventLoopGroup childGroup;
     private volatile ChannelHandler childHandler;
 
-    public ServerBootstrap() { }
+    public ServerBootstrap() {}
 
     private ServerBootstrap(ServerBootstrap bootstrap) {
         super(bootstrap);
@@ -76,9 +64,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
     }
 
     /**
-     * Set the {@link EventLoopGroup} for the parent (acceptor) and the child (client). These
-     * {@link EventLoopGroup}'s are used to handle all the events and IO for {@link ServerChannel} and
-     * {@link Channel}'s.
+     * Set the {@link EventLoopGroup} for the parent (acceptor) and the child (client). These {@link EventLoopGroup}'s
+     * are used to handle all the events and IO for {@link ServerChannel} and {@link Channel}'s.
      */
     public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
         super.group(parentGroup);
@@ -154,6 +141,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                     pipeline.addLast(handler);
                 }
 
+                // 向EventLoop提交执行任务
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -164,6 +152,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                 });
             }
         });
+
         if (!extensions.isEmpty() && channel instanceof ServerChannel) {
             ServerChannel serverChannel = (ServerChannel)channel;
             for (ChannelInitializerExtension extension : extensions) {
@@ -198,10 +187,9 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         private final Runnable enableAutoReadTask;
         private final Collection<ChannelInitializerExtension> extensions;
 
-        ServerBootstrapAcceptor(
-                final Channel channel, EventLoopGroup childGroup, ChannelHandler childHandler,
-                Entry<ChannelOption<?>, Object>[] childOptions, Entry<AttributeKey<?>, Object>[] childAttrs,
-                Collection<ChannelInitializerExtension> extensions) {
+        ServerBootstrapAcceptor(final Channel channel, EventLoopGroup childGroup, ChannelHandler childHandler,
+            Entry<ChannelOption<?>, Object>[] childOptions, Entry<AttributeKey<?>, Object>[] childAttrs,
+            Collection<ChannelInitializerExtension> extensions) {
             this.childGroup = childGroup;
             this.childHandler = childHandler;
             this.childOptions = childOptions;
@@ -224,7 +212,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         @Override
         @SuppressWarnings("unchecked")
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
-            final Channel child = (Channel) msg;
+            final Channel child = (Channel)msg;
 
             child.pipeline().addLast(childHandler);
 
@@ -282,8 +270,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
     }
 
     /**
-     * Return the configured {@link EventLoopGroup} which will be used for the child channels or {@code null}
-     * if non is configured yet.
+     * Return the configured {@link EventLoopGroup} which will be used for the child channels or {@code null} if non is
+     * configured yet.
      *
      * @deprecated Use {@link #config()} instead.
      */

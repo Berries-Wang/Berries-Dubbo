@@ -26,10 +26,28 @@ import io.netty.util.AttributeMap;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-
 /**
- * A nexus to a network socket or a component which is capable of I/O
- * operations such as read, write, connect, and bind.
+ * <pre>
+ *     Channel 是核心组件之一，代表一个网络连接的抽象。它是 Netty 进行网络通信的基础，封装了底层网络操作（如 TCP、UDP 等），提供了统一的 API 来处理 I/O 操作和事件。
+ *
+ *     a. 事件驱动：
+ *             Channel 与 EventLoop 绑定，所有 I/O 事件（如连接建立、数据到达、连接关闭等）都由 EventLoop 处理。
+ *
+ *     b. 与 ChannelPipeline 和 ChannelHandler 协作：
+ *             每个 Channel 都有一个 ChannelPipeline，用于管理 ChannelHandler。
+ *             ChannelHandler 负责处理 I/O 事件和数据，开发者可以通过添加自定义的 ChannelHandler 实现业务逻辑。
+ *
+ *     c. Channel使用场景
+ *        服务端:
+ *           NioServerSocketChannel 监听客户端连接.
+ *           为每个客户端连接创建一个新的 Channel，处理其 I/O 事件
+ *
+ *     d.生命周期管理：
+ *           Channel 有自己的生命周期，包括创建、注册、激活、关闭等状态。
+ *           可以通过 ChannelFuture 监听 Channel 的状态变化。
+ * </pre>
+ * A nexus to a network socket or a component which is capable of I/O operations such as read, write, connect, and
+ * bind.
  * <p>
  * A channel provides a user:
  * <ul>
@@ -48,7 +66,7 @@ import java.net.SocketAddress;
  * a {@link ChannelFuture} instance which will notify you when the requested I/O
  * operation has succeeded, failed, or canceled.
  *
- * <h3>Channels are hierarchical</h3>
+ * <h3>Channels are hierarchical(Channels 是分层的)</h3>
  * <p>
  * A {@link Channel} can have a {@linkplain #parent() parent} depending on
  * how it was created.  For instance, a {@link SocketChannel}, that was accepted
@@ -89,8 +107,7 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
     /**
      * Returns the parent of this channel.
      *
-     * @return the parent channel.
-     *         {@code null} if this channel does not have a parent channel.
+     * @return the parent channel. {@code null} if this channel does not have a parent channel.
      */
     Channel parent();
 
@@ -120,60 +137,51 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
     ChannelMetadata metadata();
 
     /**
-     * Returns the local address where this channel is bound to.  The returned
-     * {@link SocketAddress} is supposed to be down-cast into more concrete
-     * type such as {@link InetSocketAddress} to retrieve the detailed
-     * information.
+     * Returns the local address where this channel is bound to.  The returned {@link SocketAddress} is supposed to be
+     * down-cast into more concrete type such as {@link InetSocketAddress} to retrieve the detailed information.
      *
-     * @return the local address of this channel.
-     *         {@code null} if this channel is not bound.
+     * @return the local address of this channel. {@code null} if this channel is not bound.
      */
     SocketAddress localAddress();
 
     /**
-     * Returns the remote address where this channel is connected to.  The
-     * returned {@link SocketAddress} is supposed to be down-cast into more
-     * concrete type such as {@link InetSocketAddress} to retrieve the detailed
-     * information.
+     * Returns the remote address where this channel is connected to.  The returned {@link SocketAddress} is supposed to
+     * be down-cast into more concrete type such as {@link InetSocketAddress} to retrieve the detailed information.
      *
-     * @return the remote address of this channel.
-     *         {@code null} if this channel is not connected.
-     *         If this channel is not connected but it can receive messages
-     *         from arbitrary remote addresses (e.g. {@link DatagramChannel},
-     *         use {@link DatagramPacket#recipient()} to determine
-     *         the origination of the received message as this method will
-     *         return {@code null}.
+     * @return the remote address of this channel. {@code null} if this channel is not connected. If this channel is not
+     *     connected but it can receive messages from arbitrary remote addresses (e.g. {@link DatagramChannel}, use
+     *     {@link DatagramPacket#recipient()} to determine the origination of the received message as this method will
+     *     return {@code null}.
      */
     SocketAddress remoteAddress();
 
     /**
-     * Returns the {@link ChannelFuture} which will be notified when this
-     * channel is closed.  This method always returns the same future instance.
+     * Returns the {@link ChannelFuture} which will be notified when this channel is closed.  This method always returns
+     * the same future instance.
      */
     ChannelFuture closeFuture();
 
     /**
-     * Returns {@code true} if and only if the I/O thread will perform the
-     * requested write operation immediately.  Any write requests made when
-     * this method returns {@code false} are queued until the I/O thread is
-     * ready to process the queued write requests.
+     * Returns {@code true} if and only if the I/O thread will perform the requested write operation immediately.  Any
+     * write requests made when this method returns {@code false} are queued until the I/O thread is ready to process
+     * the queued write requests.
      *
-     * {@link WriteBufferWaterMark} can be used to configure on which condition
-     * the write buffer would cause this channel to change writability.
+     * {@link WriteBufferWaterMark} can be used to configure on which condition the write buffer would cause this
+     * channel to change writability.
      */
     boolean isWritable();
 
     /**
-     * Get how many bytes can be written until {@link #isWritable()} returns {@code false}.
-     * This quantity will always be non-negative. If {@link #isWritable()} is {@code false} then 0.
+     * Get how many bytes can be written until {@link #isWritable()} returns {@code false}. This quantity will always be
+     * non-negative. If {@link #isWritable()} is {@code false} then 0.
      *
      * {@link WriteBufferWaterMark} can be used to define writability settings.
      */
     long bytesBeforeUnwritable();
 
     /**
-     * Get how many bytes must be drained from underlying buffers until {@link #isWritable()} returns {@code true}.
-     * This quantity will always be non-negative. If {@link #isWritable()} is {@code true} then 0.
+     * Get how many bytes must be drained from underlying buffers until {@link #isWritable()} returns {@code true}. This
+     * quantity will always be non-negative. If {@link #isWritable()} is {@code true} then 0.
      *
      * {@link WriteBufferWaterMark} can be used to define writability settings.
      */
@@ -222,33 +230,31 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
         RecvByteBufAllocator.Handle recvBufAllocHandle();
 
         /**
-         * Return the {@link SocketAddress} to which is bound local or
-         * {@code null} if none.
+         * Return the {@link SocketAddress} to which is bound local or {@code null} if none.
          */
         SocketAddress localAddress();
 
         /**
-         * Return the {@link SocketAddress} to which is bound remote or
-         * {@code null} if none is bound yet.
+         * Return the {@link SocketAddress} to which is bound remote or {@code null} if none is bound yet.
          */
         SocketAddress remoteAddress();
 
         /**
-         * Register the {@link Channel} of the {@link ChannelPromise} and notify
-         * the {@link ChannelFuture} once the registration was complete.
+         * Register the {@link Channel} of the {@link ChannelPromise} and notify the {@link ChannelFuture} once the
+         * registration was complete.
          */
         void register(EventLoop eventLoop, ChannelPromise promise);
 
         /**
-         * Bind the {@link SocketAddress} to the {@link Channel} of the {@link ChannelPromise} and notify
-         * it once its done.
+         * Bind the {@link SocketAddress} to the {@link Channel} of the {@link ChannelPromise} and notify it once its
+         * done.
          */
         void bind(SocketAddress localAddress, ChannelPromise promise);
 
         /**
          * Connect the {@link Channel} of the given {@link ChannelFuture} with the given remote {@link SocketAddress}.
-         * If a specific local {@link SocketAddress} should be used it need to be given as argument. Otherwise just
-         * pass {@code null} to it.
+         * If a specific local {@link SocketAddress} should be used it need to be given as argument. Otherwise just pass
+         * {@code null} to it.
          *
          * The {@link ChannelPromise} will get notified once the connect operation was complete.
          */
@@ -267,8 +273,8 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
         void close(ChannelPromise promise);
 
         /**
-         * Closes the {@link Channel} immediately without firing any events.  Probably only useful
-         * when registration attempt failed.
+         * Closes the {@link Channel} immediately without firing any events.  Probably only useful when registration
+         * attempt failed.
          */
         void closeForcibly();
 
@@ -295,14 +301,15 @@ public interface Channel extends AttributeMap, ChannelOutboundInvoker, Comparabl
         void flush();
 
         /**
-         * Return a special ChannelPromise which can be reused and passed to the operations in {@link Unsafe}.
-         * It will never be notified of a success or error and so is only a placeholder for operations
-         * that take a {@link ChannelPromise} as argument but for which you not want to get notified.
+         * Return a special ChannelPromise which can be reused and passed to the operations in {@link Unsafe}. It will
+         * never be notified of a success or error and so is only a placeholder for operations that take a
+         * {@link ChannelPromise} as argument but for which you not want to get notified.
          */
         ChannelPromise voidPromise();
 
         /**
-         * Returns the {@link ChannelOutboundBuffer} of the {@link Channel} where the pending write requests are stored.
+         * Returns the {@link ChannelOutboundBuffer} of the {@link Channel} where the pending write requests are
+         * stored.
          */
         ChannelOutboundBuffer outboundBuffer();
     }

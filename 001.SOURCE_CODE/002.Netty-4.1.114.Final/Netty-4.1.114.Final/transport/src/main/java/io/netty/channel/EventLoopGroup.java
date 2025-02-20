@@ -25,6 +25,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  *     需要注意:
  *  1. 实现了 ExecuteService 接口， 用途提交执行任务(线程池也实现了这个接口)
  * </pre>
+ *
  */
 public interface EventLoopGroup extends EventExecutorGroup {
     /**

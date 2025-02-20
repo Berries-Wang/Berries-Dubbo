@@ -503,35 +503,36 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     @Override
     protected void run() {
         int selectCnt = 0;
-        for (;;) {
+        // 无限循环:
+        for (; ; ) {
             try {
                 int strategy;
                 try {
                     strategy = selectStrategy.calculateStrategy(selectNowSupplier, hasTasks());
                     switch (strategy) {
-                    case SelectStrategy.CONTINUE:
-                        continue;
+                        case SelectStrategy.CONTINUE:
+                            continue;
 
-                    case SelectStrategy.BUSY_WAIT:
-                        // fall-through to SELECT since the busy-wait is not supported with NIO
+                        case SelectStrategy.BUSY_WAIT:
+                            // fall-through to SELECT since the busy-wait is not supported with NIO
 
-                    case SelectStrategy.SELECT:
-                        long curDeadlineNanos = nextScheduledTaskDeadlineNanos();
-                        if (curDeadlineNanos == -1L) {
-                            curDeadlineNanos = NONE; // nothing on the calendar
-                        }
-                        nextWakeupNanos.set(curDeadlineNanos);
-                        try {
-                            if (!hasTasks()) {
-                                strategy = select(curDeadlineNanos);
+                        case SelectStrategy.SELECT:
+                            long curDeadlineNanos = nextScheduledTaskDeadlineNanos();
+                            if (curDeadlineNanos == -1L) {
+                                curDeadlineNanos = NONE; // nothing on the calendar
                             }
-                        } finally {
-                            // This update is just to help block unnecessary selector wakeups
-                            // so use of lazySet is ok (no race condition)
-                            nextWakeupNanos.lazySet(AWAKE);
-                        }
-                        // fall through
-                    default:
+                            nextWakeupNanos.set(curDeadlineNanos);
+                            try {
+                                if (!hasTasks()) {
+                                    strategy = select(curDeadlineNanos);
+                                }
+                            } finally {
+                                // This update is just to help block unnecessary selector wakeups
+                                // so use of lazySet is ok (no race condition)
+                                nextWakeupNanos.lazySet(AWAKE);
+                            }
+                            // fall through
+                        default:
                     }
                 } catch (IOException e) {
                     // If we receive an IOException here its because the Selector is messed up. Let's rebuild
@@ -572,7 +573,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 if (ranTasks || strategy > 0) {
                     if (selectCnt > MIN_PREMATURE_SELECTOR_RETURNS && logger.isDebugEnabled()) {
                         logger.debug("Selector.select() returned prematurely {} times in a row for Selector {}.",
-                                selectCnt - 1, selector);
+                            selectCnt - 1, selector);
                     }
                     selectCnt = 0;
                 } else if (unexpectedSelectorWakeup(selectCnt)) { // Unexpected wakeup (unusual case)
@@ -582,7 +583,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 // Harmless exception - log anyway
                 if (logger.isDebugEnabled()) {
                     logger.debug(CancelledKeyException.class.getSimpleName() + " raised by a Selector {} - JDK bug?",
-                            selector, e);
+                        selector, e);
                 }
             } catch (Error e) {
                 throw e;

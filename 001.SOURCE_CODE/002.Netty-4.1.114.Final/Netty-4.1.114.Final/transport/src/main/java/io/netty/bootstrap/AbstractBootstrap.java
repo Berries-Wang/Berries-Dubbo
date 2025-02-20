@@ -286,6 +286,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
     private ChannelFuture doBind(final SocketAddress localAddress) {
 
+        // 初始化并注册Channel
         final ChannelFuture regFuture = initAndRegister();
 
         final Channel channel = regFuture.channel();
@@ -322,6 +323,9 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         }
     }
 
+    /**
+     * 初始化并注册Channel
+     */
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
@@ -332,6 +336,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
              */
             channel = channelFactory.newChannel();
 
+            // 初始化Channel
             init(channel);
         } catch (Throwable t) {
             if (channel != null) {
@@ -344,6 +349,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
+        // 向Boss-EventLoopGroup中注册Channel： 会将registered置为true
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {

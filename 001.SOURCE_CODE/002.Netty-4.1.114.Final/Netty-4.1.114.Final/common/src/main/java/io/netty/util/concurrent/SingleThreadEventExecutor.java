@@ -833,7 +833,9 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     private void execute(Runnable task, boolean immediate) {
         boolean inEventLoop = inEventLoop();
+        // 添加任务
         addTask(task);
+
         if (!inEventLoop) {
             startThread();
             if (isShutdown()) {
@@ -952,6 +954,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
             if (STATE_UPDATER.compareAndSet(this, ST_NOT_STARTED, ST_STARTED)) {
                 boolean success = false;
                 try {
+                    // 启动执行线程: 无限循环
                     doStartThread();
                     success = true;
                 } finally {
@@ -983,6 +986,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     private void doStartThread() {
         assert thread == null;
+        // 向线程池提交执行任务
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -994,6 +998,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
                 boolean success = false;
                 updateLastExecutionTime();
                 try {
+                    // io.netty.channel.nio.NioEventLoop
                     SingleThreadEventExecutor.this.run();
                     success = true;
                 } catch (Throwable t) {
