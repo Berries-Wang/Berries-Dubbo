@@ -76,9 +76,10 @@ public class DefaultChannelPipeline implements ChannelPipeline {
      * This is the head of a linked list that is processed by {@link #callHandlerAddedForAllHandlers()} and so process
      * all the pending {@link #callHandlerAdded0(AbstractChannelHandlerContext)}.
      *
-     * We only keep the head because it is expected that the list is used infrequently and its size is small.
-     * Thus full iterations to do insertions is assumed to be a good compromised to saving memory and tail management
-     * complexity.
+     * We only keep the head because it is expected that the list is used infrequently and its size is small. Thus full
+     * iterations to do insertions is assumed to be a good compromised to saving memory and tail management complexity.
+     * （这是一个链表的头部，该链表通过 callHandlerAddedForAllHandlers() 进行处理，从而处理所有待处理的
+     * callHandlerAdded0(AbstractChannelHandlerContext)。我们只保留链表的头部，因为预期该链表的使用频率较低且其规模较小。因此，假设通过完全遍历来进行插入操作是在节省内存和减少尾部管理复杂性之间的一个良好折衷。）
      */
     private PendingHandlerCallback pendingHandlerCallbackHead;
 
@@ -158,9 +159,8 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         ADD_AFTER;
     }
 
-    private ChannelPipeline internalAdd(EventExecutorGroup group, String name,
-                                        ChannelHandler handler, String baseName,
-                                        AddStrategy addStrategy) {
+    private ChannelPipeline internalAdd(EventExecutorGroup group, String name, ChannelHandler handler, String baseName,
+        AddStrategy addStrategy) {
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
             checkMultiplicity(handler);
@@ -191,6 +191,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             // ChannelHandler.handlerAdded(...) once the channel is registered.
             if (!registered) {
                 newCtx.setAddPending();
+                // 添加任务后续调用:
                 callHandlerCallbackLater(newCtx, true);
                 return this;
             }
@@ -595,8 +596,11 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         assert channel.eventLoop().inEventLoop();
         if (firstRegistration) {
             firstRegistration = false;
-            // We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
-            // that were added before the registration was done.
+            /**
+             *  We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
+             *  that were added before the registration was done.
+             *  (现在我们已经注册到 EventLoop 中。现在是时候调用注册前添加的 ChannelHandler 的回调函数了。)
+             */
             callHandlerAddedForAllHandlers();
         }
     }
@@ -1066,6 +1070,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             task = task.next;
         }
     }
+
 
     private void callHandlerCallbackLater(AbstractChannelHandlerContext ctx, boolean added) {
         assert !registered;

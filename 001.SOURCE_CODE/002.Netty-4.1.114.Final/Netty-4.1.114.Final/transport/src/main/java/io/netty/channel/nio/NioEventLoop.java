@@ -502,12 +502,14 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void run() {
+        // 这里，就是EventLoop里了
         int selectCnt = 0;
         // 无限循环:
         for (; ; ) {
             try {
                 int strategy;
                 try {
+                    //
                     strategy = selectStrategy.calculateStrategy(selectNowSupplier, hasTasks());
                     switch (strategy) {
                         case SelectStrategy.CONTINUE:

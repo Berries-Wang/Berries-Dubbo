@@ -81,7 +81,7 @@ public abstract class SingleThreadEventLoop extends SingleThreadEventExecutor im
     @Override
     public ChannelFuture register(Channel channel) {
         /**
-         * 注册什么,向哪里注册，如何注册
+         * 注册什么(Channel),向哪里(EventLoop)注册，如何注册
          */
         return register(new DefaultChannelPromise(channel, this));
     }
@@ -91,6 +91,8 @@ public abstract class SingleThreadEventLoop extends SingleThreadEventExecutor im
         ObjectUtil.checkNotNull(promise, "promise");
         /**
          *  这个unsafe可不是jdk内部的unsafe
+         *
+         *  往Unsafe中注册,是为啥?
          */
         promise.channel().unsafe().register(this, promise);
         return promise;

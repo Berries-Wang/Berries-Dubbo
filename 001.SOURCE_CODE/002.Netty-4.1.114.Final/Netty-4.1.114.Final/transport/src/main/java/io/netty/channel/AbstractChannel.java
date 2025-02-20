@@ -49,6 +49,8 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
     private volatile SocketAddress localAddress;
     private volatile SocketAddress remoteAddress;
     private volatile EventLoop eventLoop;
+
+    // 表示Channel是否已经注册
     private volatile boolean registered;
     private boolean closeInitiated;
     private Throwable initialCloseCause;
@@ -460,10 +462,11 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
 
             AbstractChannel.this.eventLoop = eventLoop;
 
-            if (eventLoop.inEventLoop()) { // 交由EventLoop内部线程自己注册
+            if (eventLoop.inEventLoop()) { // 交由EventLoop内部线程自己注册 , 这里是判断当前线程是否在EventLoop线程
                 register0(promise);
             } else {
                 try {
+                    // 将任务交由EventLoop来执行了: 进去看看，内有乾坤. 这里注意一下`执行者`的角色
                     eventLoop.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -500,6 +503,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                  * Ensure we call handlerAdded(...) before we actually notify the promise.
                  * This is needed as the user may already fire events through the pipeline in the ChannelFutureListener.
                  * (确保在实际通知promise之前调用handlerAdd（…）。这是必要的，因为用户可能已经通过ChannelFutureListener中的管道触发了事件。)
+                 * > 已经将Channel注册到了EventLoop上了，是时候调用注册前添加的ChannelHandler回调函数了
                  */
                 pipeline.invokeHandlerAddedIfNeeded();
 

@@ -304,7 +304,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
             regFuture.addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
+                public void operationComplete(ChannelFuture future) throws Exception { // 当注册流程执行完成
                     Throwable cause = future.cause();
                     if (cause != null) {
                         // Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
@@ -314,7 +314,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
                         // Registration was successful, so set the correct executor to use.
                         // See https://github.com/netty/netty/issues/2586
                         promise.registered();
-
+                        // 绑定: 套接字绑定 & 监听...
                         doBind0(regFuture, channel, localAddress, promise);
                     }
                 }
@@ -331,7 +331,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         try {
             /**
              * Case 1:
-             *  有个上下文:  io.netty.example.echo.EchoServer 代码中会调用 io.netty.bootstrap.AbstractBootstrap#channel(java.lang.Class)
+             *  有个上下文:  io.netty.example.echo.EchoServer 代码中会调用
+             *  io.netty.bootstrap.AbstractBootstrap#channel(java.lang.Class)
              *    因此： channel.getClass() : io.netty.channel.socket.nio.NioServerSocketChannel
              */
             channel = channelFactory.newChannel();
@@ -349,7 +350,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
-        // 向Boss-EventLoopGroup中注册Channel： 会将registered置为true
+        // 向Boss-EventLoopGroup中注册Channel： 会将registered置为true (或者说是将Channel构建完成)
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {

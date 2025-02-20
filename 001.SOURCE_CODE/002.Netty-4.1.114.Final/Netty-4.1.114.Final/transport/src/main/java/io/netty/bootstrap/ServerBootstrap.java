@@ -136,12 +136,13 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             @Override
             public void initChannel(final Channel ch) {
                 final ChannelPipeline pipeline = ch.pipeline();
+                // 这个Handler就是最开始注册的Handler: io.netty.bootstrap.AbstractBootstrap.handler(io.netty.channel.ChannelHandler)
                 ChannelHandler handler = config.handler();
                 if (handler != null) {
                     pipeline.addLast(handler);
                 }
 
-                // 向EventLoop提交执行任务
+                // 向EventLoop提交执行任务 ， 并不是立马执行
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -230,6 +231,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             }
 
             try {
+                // 将Channel注册到子EventLoopGroup中
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override
                     public void operationComplete(ChannelFuture future) throws Exception {
