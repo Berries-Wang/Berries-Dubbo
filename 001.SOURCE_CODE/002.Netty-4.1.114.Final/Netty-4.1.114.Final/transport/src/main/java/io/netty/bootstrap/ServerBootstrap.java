@@ -131,7 +131,11 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         final Entry<AttributeKey<?>, Object>[] currentChildAttrs = newAttributesArray(childAttrs);
         final Collection<ChannelInitializerExtension> extensions = getInitializerExtensions();
 
-        // 向 ChannelPipeline 中添加ChannelHandler
+        /*
+         * 向 ChannelPipeline 中添加ChannelHandler:
+         *    1. 这个addLast需要注意，存在异步行为,点进去看看就知道了
+         *
+         */
         p.addLast(new ChannelInitializer<Channel>() {
             @Override
             public void initChannel(final Channel ch) {
@@ -142,7 +146,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                     pipeline.addLast(handler);
                 }
 
-                // 向EventLoop提交执行任务 ， 并不是立马执行
+                // 向Boss-EventLoop提交执行任务 ， 并不是立马执行
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {

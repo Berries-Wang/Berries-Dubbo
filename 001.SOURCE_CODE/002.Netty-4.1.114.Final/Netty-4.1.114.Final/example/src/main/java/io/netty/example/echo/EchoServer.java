@@ -49,7 +49,7 @@ public final class EchoServer {
             b.group(bossGroup, workerGroup)
              .channel(NioServerSocketChannel.class) // 设置ChannelFactory (字段: io.netty.bootstrap.AbstractBootstrap.channelFactory)，可能的操作(NIO/EPOLL不同而不同): 创建套接字、...
              .option(ChannelOption.SO_BACKLOG, 100) // 当服务器端的 TCP 套接字正在处理一个连接请求时，如果此时有新的连接请求到达，操作系统会将这些新的连接请求放入一个队列中，等待服务器处理。SO_BACKLOG 参数就是用来设置这个队列的最大长度
-             .handler(new LoggingHandler(LogLevel.INFO))
+           //  .handler(new LoggingHandler(LogLevel.INFO))
              .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {

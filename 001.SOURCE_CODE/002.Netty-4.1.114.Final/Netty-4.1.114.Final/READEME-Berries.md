@@ -24,3 +24,10 @@ bind(int):262, AbstractBootstrap (io.netty.bootstrap), AbstractBootstrap.java
 main(String[]):66, EchoServer (io.netty.example.echo), EchoServer.java
 ```
 往ChannelPipeline添加的任务(pipeline.addLast)何时执行
+
+
+
+? 每个handler都有自己的ChannelContext? YES
+
+
+> 查看: [code_unix_epoll_server.c](https://github.com/Berries-Wang/UNIX-NOTE/blob/master/007.UNIX_NET/000.IO%E5%A4%8D%E7%94%A8/code_unix_epoll_server.c) 查看网络代码开发流程，通过此来分析并理解Netty启动流程

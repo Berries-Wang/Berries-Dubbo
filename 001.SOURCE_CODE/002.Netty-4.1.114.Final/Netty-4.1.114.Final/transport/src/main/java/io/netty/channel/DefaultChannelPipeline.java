@@ -166,7 +166,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             checkMultiplicity(handler);
             name = filterName(name, handler);
 
-            // 创建一个新的 ChannelHandlerContext
+            // 创建一个新的 ChannelHandlerContext: group变了
             newCtx = newContext(group, name, handler);
 
             switch (addStrategy) {
@@ -186,12 +186,15 @@ public class DefaultChannelPipeline implements ChannelPipeline {
                     throw new IllegalArgumentException("unknown add strategy: " + addStrategy);
             }
 
-            // If the registered is false it means that the channel was not registered on an eventLoop yet.
-            // In this case we add the context to the pipeline and add a task that will call
-            // ChannelHandler.handlerAdded(...) once the channel is registered.
+            /**
+             * If the registered is false it means that the channel was not registered on an eventLoop yet.
+             * In this case we add the context to the pipeline and add a task that will call  ChannelHandler.handlerAdded(...) once the channel is registered.
+             * (如果registered为 false，则表示该通道尚未在 eventLoop 上注册。在这种情况下，我们将上下文添加到管道并添加一个任务，
+             * 该任务将在通道注册后调用 ChannelHandler.handlerAdded(...)。)
+             */
             if (!registered) {
                 newCtx.setAddPending();
-                // 添加任务后续调用:
+                // =====>>>> 添加任务后续调用(当注册完成时调用):
                 callHandlerCallbackLater(newCtx, true);
                 return this;
             }

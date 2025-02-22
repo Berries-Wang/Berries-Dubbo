@@ -491,7 +491,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     return;
                 }
                 boolean firstRegistration = neverRegistered;
-                // 根据Channel不同而不同
+                // 根据Channel不同而不同，如: AbstractNioChannel (将selector注册到Channel上)
                 doRegister();
 
                 neverRegistered = false;
@@ -507,16 +507,20 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                  */
                 pipeline.invokeHandlerAddedIfNeeded();
 
+                /**
+                 * 注册成功，调用 register promise 的回调函数，就是调用bind接口
+                 *    1. 对于 io.netty.example.echo.EchoServer 来说，就是绑定端口 并执行 listen 函数
+                 */
                 safeSetSuccess(promise);
 
                 /**
-                 * 通知 ChannelHandlerContext Channel 已经注册了
+                 * 通知 ChannelHandlerContext Channel 已经注册了: 调用通道内所有ChannelHandler的channelRegistered 方法
                  */
                 pipeline.fireChannelRegistered();
                 /**
                  * Only fire a channelActive if the channel has never been registered.
                  * This prevents firing multiple channel actives if the channel is deregistered and re-registered.
-                 * (仅在频道从未注册的情况下激活频道Active。这可以防止在信道被注销和重新注册时触发多个信道活动。)
+                 * (仅在Channel从未注册的情况下激活ChannelActive。这可以防止在信道被注销和重新注册时触发多个信道活动。)
                  */
                 if (isActive()) {
                     if (firstRegistration) {
@@ -986,6 +990,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
          * Marks the specified {@code promise} as success.  If the {@code promise} is done already, log a message.
          */
         protected final void safeSetSuccess(ChannelPromise promise) {
+            // promise.trySuccess ，在promise成功之后，会调用listeners
             if (!(promise instanceof VoidChannelPromise) && !promise.trySuccess()) {
                 logger.warn("Failed to mark a promise as success because it is done already: {}", promise);
             }
