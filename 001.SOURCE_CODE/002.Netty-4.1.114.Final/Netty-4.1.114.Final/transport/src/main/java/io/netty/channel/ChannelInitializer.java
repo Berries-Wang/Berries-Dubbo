@@ -26,12 +26,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A special {@link ChannelInboundHandler} which offers an easy way to initialize a {@link Channel} once it was
+ * A special {@link ChannelInboundHandler} which offers(提供) an easy way to initialize a {@link Channel} once it was
  * registered to its {@link EventLoop}.
  *
  * Implementations are most often used in the context of {@link Bootstrap#handler(ChannelHandler)} ,
  * {@link ServerBootstrap#handler(ChannelHandler)} and {@link ServerBootstrap#childHandler(ChannelHandler)} to
- * setup the {@link ChannelPipeline} of a {@link Channel}.
+ * setup(组织，安装) the {@link ChannelPipeline} of a {@link Channel}.
  *
  * <pre>
  *
@@ -46,27 +46,32 @@ import java.util.concurrent.ConcurrentHashMap;
  * bootstrap.childHandler(new MyChannelInitializer());
  * ...
  * </pre>
- * Be aware that this class is marked as {@link Sharable} and so the implementation must be safe to be re-used.
+ * Be aware(知道的，明白的；) that this class is marked as {@link Sharable} and so the implementation must be safe to be
+ * re-used.
  *
- * @param <C>   A sub-type of {@link Channel}
+ * @param <C> A sub-type of {@link Channel}
  */
 @Sharable
 public abstract class ChannelInitializer<C extends Channel> extends ChannelInboundHandlerAdapter {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ChannelInitializer.class);
-    // We use a Set as a ChannelInitializer is usually shared between all Channels in a Bootstrap /
-    // ServerBootstrap. This way we can reduce the memory usage compared to use Attributes.
-    private final Set<ChannelHandlerContext> initMap = Collections.newSetFromMap(
-            new ConcurrentHashMap<ChannelHandlerContext, Boolean>());
+    /**
+     * We use a Set as a ChannelInitializer is usually shared between all Channels in a Bootstrap / ServerBootstrap.
+     * This way we can reduce the memory usage compared to use Attributes. (我们使用Set是因为ChannelInitializer通常在Bootstrap /
+     * ServerBootstrap中的所有通道之间共享。与使用属性相比，这样可以减少内存使用。)
+     */
+    private final Set<ChannelHandlerContext> initMap =
+        Collections.newSetFromMap(new ConcurrentHashMap<ChannelHandlerContext, Boolean>());
 
     /**
-     * This method will be called once the {@link Channel} was registered. After the method returns this instance
-     * will be removed from the {@link ChannelPipeline} of the {@link Channel}.
+     * This method will be called once the {@link Channel} was registered. After the method returns this instance will
+     * be removed from the {@link ChannelPipeline} of the {@link Channel}.
+     * (此方法将在注册通道后调用。方法返回后，该实例将从通道的ChannelPipeline中删除。)
      *
-     * @param ch            the {@link Channel} which was registered.
-     * @throws Exception    is thrown if an error occurs. In that case it will be handled by
-     *                      {@link #exceptionCaught(ChannelHandlerContext, Throwable)} which will by default close
-     *                      the {@link Channel}.
+     * @param ch the {@link Channel} which was registered.
+     * @throws Exception is thrown if an error occurs. In that case it will be handled by
+     *                   {@link #exceptionCaught(ChannelHandlerContext, Throwable)} which will by default close the
+     *                   {@link Channel}.
      */
     protected abstract void initChannel(C ch) throws Exception;
 
@@ -124,9 +129,9 @@ public abstract class ChannelInitializer<C extends Channel> extends ChannelInbou
 
     @SuppressWarnings("unchecked")
     private boolean initChannel(ChannelHandlerContext ctx) throws Exception {
-        if (initMap.add(ctx)) { // Guard against re-entrance.
+        if (initMap.add(ctx)) { // Guard against re-entrance.(谨防再次进入)
             try {
-                initChannel((C) ctx.channel());
+                initChannel((C)ctx.channel());
             } catch (Throwable cause) {
                 // Explicitly call exceptionCaught(...) as we removed the handler before calling initChannel(...).
                 // We do so to prevent multiple calls to initChannel(...).

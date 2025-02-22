@@ -80,6 +80,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
      * iterations to do insertions is assumed to be a good compromised to saving memory and tail management complexity.
      * （这是一个链表的头部，该链表通过 callHandlerAddedForAllHandlers() 进行处理，从而处理所有待处理的
      * callHandlerAdded0(AbstractChannelHandlerContext)。我们只保留链表的头部，因为预期该链表的使用频率较低且其规模较小。因此，假设通过完全遍历来进行插入操作是在节省内存和减少尾部管理复杂性之间的一个良好折衷。）
+     * > 当Channel尚未注册时，有些工作需要在Channel注册后执行，那么就先把任务缓存在这里...
      */
     private PendingHandlerCallback pendingHandlerCallbackHead;
 
@@ -205,6 +206,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
                 return this;
             }
         }
+        // 当已经注册了，那就直接调用了
         callHandlerAdded0(newCtx);
         return this;
     }
@@ -603,6 +605,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
              *  We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
              *  that were added before the registration was done.
              *  (现在我们已经注册到 EventLoop 中。现在是时候调用注册前添加的 ChannelHandler 的回调函数了。)
+             *  > 处理  io.netty.channel.DefaultChannelPipeline#pendingHandlerCallbackHead
              */
             callHandlerAddedForAllHandlers();
         }
@@ -1069,6 +1072,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         // the EventLoop.
         PendingHandlerCallback task = pendingHandlerCallbackHead;
         while (task != null) {
+            // 在调用的时候，还是可能会往pendingHandlerCallbackHead添加元素
             task.execute();
             task = task.next;
         }

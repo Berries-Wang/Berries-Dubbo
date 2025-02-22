@@ -15,9 +15,12 @@
  */
 package io.netty.example.echo;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.CharsetUtil;
 
 /**
  * Handler implementation for the echo server.
@@ -27,6 +30,18 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        // 将 ByteBuf 转换为字符串
+        if (msg instanceof ByteBuf) {
+            ByteBuf byteBuf = (ByteBuf)msg;
+            String message = byteBuf.toString(CharsetUtil.UTF_8); // 使用 UTF-8 编码
+            System.out.println("Received from client: " + message);
+
+            // 返回响应给客户端
+            ByteBuf response = Unpooled.copiedBuffer("Server received: " + message, CharsetUtil.UTF_8);
+            ctx.writeAndFlush(response);
+        } else {
+            System.out.println("Received unknown message type: " + msg.getClass());
+        }
         ctx.write(msg);
     }
 

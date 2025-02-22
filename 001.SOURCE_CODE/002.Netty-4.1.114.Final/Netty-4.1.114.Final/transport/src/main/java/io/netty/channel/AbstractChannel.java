@@ -455,8 +455,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 return;
             }
             if (!isCompatible(eventLoop)) {
-                promise.setFailure(
-                    new IllegalStateException("incompatible event loop type: " + eventLoop.getClass().getName()));
+                promise.setFailure(new IllegalStateException("incompatible event loop type: " + eventLoop.getClass().getName()));
                 return;
             }
 
@@ -466,7 +465,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 register0(promise);
             } else {
                 try {
-                    // 将任务交由EventLoop来执行了: 进去看看，内有乾坤. 这里注意一下`执行者`的角色
+                    // 将任务交由EventLoop来执行了: 进去看看，内有乾坤. 这里注意一下`执行者`的角色: 此方法会启动EventLoop线程
                     eventLoop.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -504,6 +503,9 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                  * This is needed as the user may already fire events through the pipeline in the ChannelFutureListener.
                  * (确保在实际通知promise之前调用handlerAdd（…）。这是必要的，因为用户可能已经通过ChannelFutureListener中的管道触发了事件。)
                  * > 已经将Channel注册到了EventLoop上了，是时候调用注册前添加的ChannelHandler回调函数了
+                 *
+                 * >>> 调用ChannelHandlerPipeline 的 pending 任务，
+                 *    即，执行那些需要在注册完成后的任务: 由 io.netty.channel.ChannelPipeline#addLast(io.netty.channel.ChannelHandler...) 方法添加的任务
                  */
                 pipeline.invokeHandlerAddedIfNeeded();
 
@@ -551,17 +553,21 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             }
 
             // See: https://github.com/netty/netty/issues/576
-            if (Boolean.TRUE.equals(config().getOption(
-                ChannelOption.SO_BROADCAST)) && localAddress instanceof InetSocketAddress && !((InetSocketAddress)localAddress).getAddress()
-                .isAnyLocalAddress() && !PlatformDependent.isWindows() && !PlatformDependent.maybeSuperUser()) {
+            if (Boolean.TRUE.equals(config().getOption(ChannelOption.SO_BROADCAST))
+                       && localAddress instanceof InetSocketAddress
+                       && !((InetSocketAddress)localAddress).getAddress().isAnyLocalAddress()
+                       && !PlatformDependent.isWindows()
+                       && !PlatformDependent.maybeSuperUser()) {
                 // Warn a user about the fact that a non-root user can't receive a
                 // broadcast packet on *nix if the socket is bound on non-wildcard address.
-                logger.warn(
-                    "A non-root user can't receive a broadcast packet if the socket " + "is not bound to a wildcard address; binding to a non-wildcard " + "address (" + localAddress + ") anyway as requested.");
+                logger.warn("A non-root user can't receive a broadcast packet if the socket " + "is not bound to a wildcard address; binding to a non-wildcard " + "address (" + localAddress + ") anyway as requested.");
             }
 
             boolean wasActive = isActive();
             try {
+                /**
+                 * bind 之后， isActive() 就是true了
+                 */
                 doBind(localAddress);
             } catch (Throwable t) {
                 safeSetFailure(promise, t);
@@ -569,10 +575,14 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                 return;
             }
 
+            // isActive() 由 false -> true , 则触发执行
             if (!wasActive && isActive()) {
                 invokeLater(new Runnable() {
                     @Override
                     public void run() {
+                        /**
+                         * 会设置channel的事件监听类型
+                         */
                         pipeline.fireChannelActive();
                     }
                 });

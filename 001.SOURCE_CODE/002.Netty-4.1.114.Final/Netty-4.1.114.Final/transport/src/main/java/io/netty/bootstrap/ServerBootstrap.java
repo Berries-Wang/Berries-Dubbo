@@ -134,7 +134,8 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         /*
          * 向 ChannelPipeline 中添加ChannelHandler:
          *    1. 这个addLast需要注意，存在异步行为,点进去看看就知道了
-         *
+         *       >  向 io.netty.channel.DefaultChannelPipeline.head 添加handler
+         *       >> 当Channel未注册到EventLoop上时，则会向 io.netty.channel.DefaultChannelPipeline.pendingHandlerCallbackHead 添加回调函数，等到可以注册完成时再执行
          */
         p.addLast(new ChannelInitializer<Channel>() {
             @Override
@@ -146,7 +147,12 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                     pipeline.addLast(handler);
                 }
 
-                // 向Boss-EventLoop提交执行任务 ， 并不是立马执行
+                /**
+                 * 向Boss-EventLoop提交执行任务 ， 并不是立马执行
+                 *
+                 * 为什么不是直接： pipeline.addLast(...)；
+                 * > 参考: 005.Netty/008.Netty-ServerBootstrapAcceptor为什么不在Main线程中添加/000.为什么不直接在Main线程中添加ServerBootstrapAcceptor.md
+                 */
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {

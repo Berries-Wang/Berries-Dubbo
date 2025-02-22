@@ -382,7 +382,12 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         boolean selected = false;
         for (;;) {
             try {
-                // 将Selector与Channel绑定
+                /**
+                 * 将Selector与Channel绑定
+                 *
+                 * > 第二个参数传0是啥意思? 见 005.Netty/007.JDK-NIO/001.java.nio.channels.SelectableChannel#register-ops参数为什么是0.md
+                 * >>> 即 为了动态设置感兴趣的事件， 这里是0，表示不监听任何事件。临时禁用事件监听
+                 */
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
