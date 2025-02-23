@@ -456,6 +456,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         // Register all channels to the new Selector.
         int nChannels = 0;
         for (SelectionKey key: oldSelector.keys()) {
+            // attachment() 在这里用上了
             Object a = key.attachment();
             try {
                 if (!key.isValid() || key.channel().keyFor(newSelectorTuple.unwrappedSelector) != null) {
@@ -537,8 +538,11 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                         default:
                     }
                 } catch (IOException e) {
-                    // If we receive an IOException here its because the Selector is messed up. Let's rebuild
-                    // the selector and retry. https://github.com/netty/netty/issues/8566
+                    /** 解决JDK Selector 空轮训bug
+                     * If we receive an IOException here its because the Selector is messed up.
+                     * Let's rebuild the selector and retry. https://github.com/netty/netty/issues/8566
+                     * 如果我们在这里收到IOException，那是因为Selector搞错了。让我们重新构建选择器并重试。
+                     */
                     rebuildSelector0();
                     selectCnt = 0;
                     handleLoopException(e);
@@ -574,8 +578,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
                 if (ranTasks || strategy > 0) {
                     if (selectCnt > MIN_PREMATURE_SELECTOR_RETURNS && logger.isDebugEnabled()) {
-                        logger.debug("Selector.select() returned prematurely {} times in a row for Selector {}.",
-                            selectCnt - 1, selector);
+                        logger.debug("Selector.select() returned prematurely {} times in a row for Selector {}.", selectCnt - 1, selector);
                     }
                     selectCnt = 0;
                 } else if (unexpectedSelectorWakeup(selectCnt)) { // Unexpected wakeup (unusual case)
@@ -584,8 +587,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             } catch (CancelledKeyException e) {
                 // Harmless exception - log anyway
                 if (logger.isDebugEnabled()) {
-                    logger.debug(CancelledKeyException.class.getSimpleName() + " raised by a Selector {} - JDK bug?",
-                        selector, e);
+                    logger.debug(CancelledKeyException.class.getSimpleName() + " raised by a Selector {} - JDK bug?", selector, e);
                 }
             } catch (Error e) {
                 throw e;
