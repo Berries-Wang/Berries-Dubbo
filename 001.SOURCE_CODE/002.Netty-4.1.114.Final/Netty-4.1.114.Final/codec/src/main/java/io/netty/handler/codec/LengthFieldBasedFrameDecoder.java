@@ -187,11 +187,17 @@ import io.netty.channel.ChannelHandlerContext;
 public class LengthFieldBasedFrameDecoder extends ByteToMessageDecoder {
 
     private final ByteOrder byteOrder;
+    // 消息帧的最大长度，如果接收到的消息帧长度超过了这个值，则抛出 TooLongFrameException.
     private final int maxFrameLength;
+    // 长度字段的偏移量，即长度字段在消息中的起始位置
     private final int lengthFieldOffset;
+    // 长度字段的字节数
     private final int lengthFieldLength;
     private final int lengthFieldEndOffset;
+
+    // 长度调整值,用于修正长度字段的值。若长度字段包含了消息头的长度，则需要减去消息头的长度
     private final int lengthAdjustment;
+    // 解码后需要跳过的字节数，通常用于跳过消息头
     private final int initialBytesToStrip;
     private final boolean failFast;
     private boolean discardingTooLongFrame;
