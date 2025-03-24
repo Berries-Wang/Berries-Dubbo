@@ -733,32 +733,6 @@ public class DefaultApplicationDeployer extends AbstractDeployer<ApplicationMode
 
     private void doStart() {
         startModules();
-
-        // prepare application instance
-        //        prepareApplicationInstance();
-
-        // Ignore checking new module after start
-        //        executorRepository.getSharedExecutor().submit(() -> {
-        //            try {
-        //                while (isStarting()) {
-        //                    // notify when any module state changed
-        //                    synchronized (stateLock) {
-        //                        try {
-        //                            stateLock.wait(500);
-        //                        } catch (InterruptedException e) {
-        //                            // ignore
-        //                        }
-        //                    }
-        //
-        //                    // if has new module, do start again
-        //                    if (hasPendingModule()) {
-        //                        startModules();
-        //                    }
-        //                }
-        //            } catch (Throwable e) {
-        //                onFailed(getIdentifier() + " check start occurred an exception", e);
-        //            }
-        //        });
     }
 
     private void startModules() {

@@ -41,13 +41,13 @@ import java.util.concurrent.locks.Lock;
  * {@link ExtensionLoader}, {@code DubboBootstrap} and this class are at present designed to be
  * singleton or static (by itself totally static or uses some static fields). So the instances
  * returned from them are of process scope. If you want to support multiple dubbo servers in one
- * single process, you may need to refactor those three classes.
+ * single process, you may need to refactor(重构) those three classes.
  * <p>
- * Represent an application which is using Dubbo and store basic metadata info for using
+ * Represent(代表) an application which is using Dubbo and store basic metadata info for using
  * during the processing of RPC invoking.
  * <p>
  * ApplicationModel includes many ProviderModel which is about published services
- * and many Consumer Model which is about subscribed services.
+ * and many Consumer Model which is about subscribed services.（ApplicationModel包括许多关于发布服务的提供者模型和许多关于订阅服务的消费者模型。）
  * <p>
  */
 public class ApplicationModel extends ScopeModel {
@@ -81,7 +81,7 @@ public class ApplicationModel extends ScopeModel {
 
     /**
      * During destroying the default FrameworkModel, the FrameworkModel.defaultModel() or ApplicationModel.defaultModel()
-     * will return a broken model, maybe cause unpredictable problem.
+     * will return a broken model, maybe cause unpredictable(不可预测的) problem.
      * Recommendation: Avoid using the default model as much as possible.
      *
      * @return the global default ApplicationModel
