@@ -68,9 +68,16 @@ public abstract class ScopeModel implements ExtensionAccessor {
     private final ScopeModel parent;
     private final ExtensionScope scope;
 
+    /**
+     *
+     */
     private volatile ExtensionDirector extensionDirector;
 
+    /**
+     * ?
+     */
     private volatile ScopeBeanFactory beanFactory;
+
     private final List<ScopeModelDestroyListener> destroyListeners = new CopyOnWriteArrayList<>();
 
     private final List<ScopeClassLoaderListener> classLoaderListeners = new CopyOnWriteArrayList<>();
@@ -98,8 +105,7 @@ public abstract class ScopeModel implements ExtensionAccessor {
      */
     protected void initialize() {
         synchronized (instLock) {
-            this.extensionDirector =
-                    new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
+            this.extensionDirector = new ExtensionDirector(parent != null ? parent.getExtensionDirector() : null, scope, this);
             this.extensionDirector.addExtensionPostProcessor(new ScopeModelAwareExtensionProcessor(this));
             this.beanFactory = new ScopeBeanFactory(parent != null ? parent.getBeanFactory() : null, extensionDirector);
 

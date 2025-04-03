@@ -118,6 +118,9 @@ public class DefaultApplicationDeployer extends AbstractDeployer<ApplicationMode
     private static final ErrorTypeAwareLogger logger =
             LoggerFactory.getErrorTypeAwareLogger(DefaultApplicationDeployer.class);
 
+    /**
+     *
+     */
     private final ApplicationModel applicationModel;
 
     private final ConfigManager configManager;
@@ -681,7 +684,10 @@ public class DefaultApplicationDeployer extends AbstractDeployer<ApplicationMode
             }
 
             try {
-                // maybe call start again after add new module, check if any new module
+                /**
+                 * maybe call start again after add new module, check if any new module
+                 * (添加新模块后可能会再次调用start，检查是否有新模块)
+                 */
                 boolean hasPendingModule = hasPendingModule();
 
                 if (isStarting()) {
@@ -699,10 +705,16 @@ public class DefaultApplicationDeployer extends AbstractDeployer<ApplicationMode
                     return CompletableFuture.completedFuture(false);
                 }
 
-                // pending -> starting : first start app
-                // started -> starting : re-start app
+                /**
+                 *  将状态变为 starting
+                 * pending -> starting : first start app
+                 * started -> starting : re-start app
+                 */
                 onStarting();
 
+                /**
+                 *
+                 */
                 initialize();
 
                 doStart();
@@ -736,10 +748,14 @@ public class DefaultApplicationDeployer extends AbstractDeployer<ApplicationMode
     }
 
     private void startModules() {
-        // ensure init and start internal module first
+        /**
+         * ensure init and start internal module first
+         */
         prepareInternalModule();
 
-        // filter and start pending modules, ignore new module during starting, throw exception of module start
+        /**
+         * filter and start pending modules, ignore new module during starting, throw exception of module start
+         */
         for (ModuleModel moduleModel : applicationModel.getModuleModels()) {
             if (moduleModel.getDeployer().isPending()) {
                 moduleModel.getDeployer().start();

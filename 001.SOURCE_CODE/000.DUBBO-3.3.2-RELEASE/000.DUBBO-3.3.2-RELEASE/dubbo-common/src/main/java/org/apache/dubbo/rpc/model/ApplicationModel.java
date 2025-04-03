@@ -39,7 +39,7 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * {@link ExtensionLoader}, {@code DubboBootstrap} and this class are at present designed to be
- * singleton or static (by itself totally static or uses some static fields). So the instances
+ * singleton or static (by itself totally(完全) static or uses some static fields). So the instances
  * returned from them are of process scope. If you want to support multiple dubbo servers in one
  * single process, you may need to refactor(重构) those three classes.
  * <p>
@@ -53,6 +53,9 @@ import java.util.concurrent.locks.Lock;
 public class ApplicationModel extends ScopeModel {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationModel.class);
     public static final String NAME = "ApplicationModel";
+    /**
+     * 模块模型?啥意思
+     */
     private final List<ModuleModel> moduleModels = new CopyOnWriteArrayList<>();
     private final List<ModuleModel> pubModuleModels = new CopyOnWriteArrayList<>();
     private volatile Environment environment;
@@ -87,7 +90,9 @@ public class ApplicationModel extends ScopeModel {
      * @return the global default ApplicationModel
      */
     public static ApplicationModel defaultModel() {
-        // should get from default FrameworkModel, avoid out of sync
+        /**
+         * should get from default FrameworkModel, avoid out of sync (应该从默认FrameworkModel中获取，避免不同步)
+         */
         return FrameworkModel.defaultModel().defaultApplication();
     }
 

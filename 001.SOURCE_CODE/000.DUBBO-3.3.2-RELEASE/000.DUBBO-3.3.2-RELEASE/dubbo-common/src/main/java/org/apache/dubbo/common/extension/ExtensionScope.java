@@ -37,7 +37,7 @@ public enum ExtensionScope {
      * Consideration:
      * <ol>
      * <li>Some SPI need share data between applications inside framework</li>
-     * <li>Stateless SPI is safe shared inside framework</li>
+     * <li>Stateless(无状态的) SPI is safe shared inside framework</li>
      * </ol>
      */
     FRAMEWORK,

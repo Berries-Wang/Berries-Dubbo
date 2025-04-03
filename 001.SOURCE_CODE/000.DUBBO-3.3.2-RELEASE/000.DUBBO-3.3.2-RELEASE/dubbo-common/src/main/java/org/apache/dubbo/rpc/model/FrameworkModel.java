@@ -182,6 +182,9 @@ public class FrameworkModel extends ScopeModel {
             synchronized (globalLock) {
                 resetDefaultFrameworkModel();
                 if (defaultInstance == null) {
+                    /**
+                     * FrameworkModel 是什么?
+                     */
                     defaultInstance = new FrameworkModel();
                 }
                 instance = defaultInstance;

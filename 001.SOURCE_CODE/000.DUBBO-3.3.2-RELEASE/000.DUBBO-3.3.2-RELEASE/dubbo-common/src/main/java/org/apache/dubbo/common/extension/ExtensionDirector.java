@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p></p>
  * <p>ExtensionDirector supports multiple levels, and the child can inherit the parent's extension instances. </p>
  * <p>The way to find and create an extension instance is similar to Java classloader.</p>
+ * > 咋看起来有点像双亲委派模型呢?先记录一下，后续推翻
  */
 public class ExtensionDirector implements ExtensionAccessor {
 
@@ -37,6 +38,9 @@ public class ExtensionDirector implements ExtensionAccessor {
     private final ConcurrentMap<Class<?>, ExtensionScope> extensionScopeMap = new ConcurrentHashMap<>(64);
     private final ExtensionDirector parent;
     private final ExtensionScope scope;
+    /**
+     * ?
+     */
     private final List<ExtensionPostProcessor> extensionPostProcessors = new ArrayList<>();
     private final ScopeModel scopeModel;
     private final AtomicBoolean destroyed = new AtomicBoolean();

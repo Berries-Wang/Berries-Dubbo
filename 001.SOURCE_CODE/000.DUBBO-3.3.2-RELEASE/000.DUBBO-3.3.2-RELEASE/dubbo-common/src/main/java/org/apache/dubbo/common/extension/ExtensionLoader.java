@@ -90,11 +90,11 @@ import static org.apache.dubbo.common.constants.LoggerCodeConstants.CONFIG_FAILE
 
 /**
  * {@link org.apache.dubbo.rpc.model.ApplicationModel}, {@code DubboBootstrap} and this class are
- * at present designed to be singleton or static (by itself totally static or uses some static fields).
+ * at present designed to be singleton or static (by itself totally(完全) static or uses some static fields).
  * So the instances returned from them are of process or classloader scope. If you want to support
  * multiple dubbo servers in a single process, you may need to refactor these three classes.
  * <p>
- * Load dubbo extensions
+ * Load dubbo extensions (加载dubbo扩展)
  * <ul>
  * <li>auto inject dependency extension </li>
  * <li>auto wrap extension in wrapper </li>
